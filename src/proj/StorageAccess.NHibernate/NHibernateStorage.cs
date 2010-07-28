@@ -4,7 +4,7 @@ namespace StorageAccess.NHibernate
 	using global::NHibernate;
 	using global::NHibernate.Linq;
 
-	public class NHibernateStorage : IModifyStorage, IAmTransactional
+	public class NHibernateStorage : IUpdateStorage, IAmTransactional
 	{
 		private readonly ISession session;
 		private ITransaction transaction;
