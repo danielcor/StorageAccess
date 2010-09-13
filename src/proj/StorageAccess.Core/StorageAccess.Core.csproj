@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{00734BAB-AB65-4146-A65B-CDFBFB4D93C6}</ProjectGuid>
+    <ProjectGuid>{F30AA96A-5307-4178-8D93-E57F983B2A0A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>StorageAccess</RootNamespace>
-    <AssemblyName>StorageAccess</AssemblyName>
+    <RootNamespace>StorageAccess.Core</RootNamespace>
+    <AssemblyName>StorageAccess.Core</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
@@ -42,11 +42,14 @@
     <Compile Include="..\VersionAssemblyInfo.cs">
       <Link>Properties\VersionAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="IHandleTransactions.cs" />
-    <Compile Include="IUpdateStorage.cs" />
-    <Compile Include="IQueryStorage.cs" />
+    <Compile Include="MultiTenantStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TransactionIsolation.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\StorageAccess\StorageAccess.csproj">
+      <Project>{00734BAB-AB65-4146-A65B-CDFBFB4D93C6}</Project>
+      <Name>StorageAccess</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\CustomDictionary.xml">
@@ -54,10 +57,16 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
 </Project>

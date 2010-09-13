@@ -2,7 +2,7 @@
 {
 	using System;
 
-	public interface IAmTransactional : IDisposable
+	public interface IHandleTransactions : IDisposable
 	{
 		void BeginTransaction();
 		void BeginTransaction(TransactionIsolation level);
