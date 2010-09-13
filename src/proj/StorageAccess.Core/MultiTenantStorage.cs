@@ -40,6 +40,7 @@ namespace StorageAccess.Core
 				return item => true; // item doesn't have TenantId identifier property
 
 			// TODO: cache this
+			// TODO: check out this: http://stefan.rusek.org/Posts/LINQ-Expressions-as-Fast-Reflection-Invoke/3/
 			var parameter = Expression.Parameter(type, "item");
 			var equals = Expression.Equal(
 				Expression.Property(parameter, property),
