@@ -8,22 +8,19 @@ namespace StorageAccess.Core
 
 	public sealed class MultiTenantStorage : IUpdateStorage
 	{
-		private static readonly IDictionary<Type, PropertyInfo> Cache = new Dictionary<Type, PropertyInfo>();
+		private const string DefaultPropertyName = "TenantId";
+		private static readonly IDictionary<Type, PropertyInfo> PropertyCache =
+			new Dictionary<Type, PropertyInfo>();
 		private readonly IUpdateStorage storage;
 		private readonly Guid tenantId;
 		private readonly string propertyName;
 
-		public MultiTenantStorage(IUpdateStorage storage, Func<Guid> tenantId, string propertyName)
+		public MultiTenantStorage(IUpdateStorage storage, Guid tenantId, string propertyName)
 		{
 			this.storage = storage;
 			this.tenantId = tenantId;
-
-			if (string.IsNullOrEmpty(this.propertyName))
-				throw new ArgumentException("Argument cannot be a null or empty string.", "propertyName");
-
-			this.propertyName = propertyName;
+			this.propertyName = propertyName ?? DefaultPropertyName;
 		}
-
 		public void Dispose()
 		{
 			this.storage.Dispose();
@@ -32,30 +29,25 @@ namespace StorageAccess.Core
 
 		public IQueryable<TItem> Items<TItem>() where TItem : class
 		{
-			var queryable = this.storage.Items<TItem>();
-
-			var type = typeof(TItem);
-			var property = this.GetProperty(typeof(TItem));
-			if (property == null) // item doesn't have tenant identifier property
-				return queryable;
-
-			// TODO: cache this and make it more readable
-
-			// http://msdn.microsoft.com/en-us/library/bb882637.aspx
-			var parameter = Expression.Parameter(type, this.propertyName);
-			var left = Expression.Property(parameter, property);
-			var right = Expression.Constant(this.tenantId, typeof(Guid));
-			var expression = Expression.Equal(left, right);
-
-			var where = Expression.Call(
-				typeof(Queryable),
-				"Where",
-				new[] { queryable.ElementType },
-				expression,
-				Expression.Lambda<Func<Guid, bool>>(expression, new[] { parameter }));
-
-			return queryable.Provider.CreateQuery<TItem>(where);
+			var tenantExpression = this.FilterByTenant<TItem>();
+			return this.storage.Items<TItem>().Where(tenantExpression);
 		}
+		private Expression<Func<TItem, bool>> FilterByTenant<TItem>() where TItem : class
+		{
+			var type = typeof(TItem);
+			var property = this.GetProperty(type);
+			if (property == null)
+				return item => true; // item doesn't have TenantId identifier property
+
+			// TODO: cache this
+			var parameter = Expression.Parameter(type, "item");
+			var equals = Expression.Equal(
+				Expression.Property(parameter, property),
+				Expression.Constant(this.tenantId));
+
+			return Expression.Lambda<Func<TItem, bool>>(equals, new[] { parameter });
+		}
+
 		public void Add<TItem>(TItem item) where TItem : class
 		{
 			this.storage.Add(this.AppendTenantId(item));
@@ -83,15 +75,15 @@ namespace StorageAccess.Core
 		private PropertyInfo GetProperty(Type type)
 		{
 			PropertyInfo property;
-			if (Cache.TryGetValue(type, out property))
+			if (PropertyCache.TryGetValue(type, out property))
 				return property;
 
-			lock (Cache)
+			lock (PropertyCache)
 			{
-				if (Cache.TryGetValue(type, out property))
+				if (PropertyCache.TryGetValue(type, out property))
 					return property;
 
-				return Cache[type] = type.GetProperty(this.propertyName, BindingFlags.Instance | BindingFlags.Public);
+				return PropertyCache[type] = type.GetProperty(this.propertyName, BindingFlags.Instance | BindingFlags.Public);
 			}
 		}
 	}
