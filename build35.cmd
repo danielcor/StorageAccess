@@ -1,12 +1,14 @@
 @echo off
-SET PATH=%PATH%;C:\WINDOWS\Microsoft.NET\Framework\V3.5;
+SET FRAMEWORK_PATH=C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319
+SET PATH=%PATH%;%FRAMEWORK_PATH%;
+
 
 if exist output ( rmdir /s /q output )
 mkdir output
 
 echo Compiling
 msbuild /nologo /verbosity:quiet src/StorageAccess.sln /p:Configuration=Release /t:Clean
-msbuild /nologo /verbosity:quiet src/StorageAccess.sln /p:Configuration=Release
+msbuild /nologo /verbosity:quiet src/StorageAccess.sln /p:Configuration=Release /property:TargetFrameworkVersion=v3.5
 
 echo Copying
 copy src\proj\StorageAccess\bin\Release\*.* output\
@@ -18,7 +20,7 @@ SET FILES_TO_MERGE=
 SET FILES_TO_MERGE=%FILES_TO_MERGE% "src/proj/StorageAccess/bin/Release/StorageAccess.dll"
 SET FILES_TO_MERGE=%FILES_TO_MERGE% "src/proj/StorageAccess.Core/bin/Release/StorageAccess.Core.dll"
 SET FILES_TO_MERGE=%FILES_TO_MERGE% "src/proj/StorageAccess.NHibernate/bin/Release/StorageAccess.NHibernate.dll"
-bin\ilmerge-bin\ILMerge.exe /keyfile:src/StorageAccess.snk /v2 /xmldocs /out:output/NHibernate/StorageAccess.NHibernate.dll %FILES_TO_MERGE%
+bin\ilmerge-bin\ILMerge.exe /keyfile:src/StorageAccess.snk /targetplatform:v2 /xmldocs /out:output/NHibernate/StorageAccess.NHibernate.dll %FILES_TO_MERGE%
 copy lib\nhibernate-bin\* output\NHibernate
 
 echo Cleaning
