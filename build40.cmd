@@ -2,7 +2,6 @@
 SET FRAMEWORK_PATH=C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319
 SET PATH=%PATH%;%FRAMEWORK_PATH%;
 
-
 if exist output ( rmdir /s /q output )
 mkdir output
 

@@ -17,13 +17,13 @@ namespace StorageAccess.Core
 		private readonly IEnumerable<KeyValuePair<string, Guid>> partitions;
 
 		public PartitionedStorage(IUpdateStorage storage, Guid tenantId, Guid accountId)
-			: this(storage, GetPartitions(tenantId, accountId))
+			: this(storage, GetPartitions(tenantId, accountId).ToArray())
 		{
 		}
-		public PartitionedStorage(IUpdateStorage storage, IEnumerable<KeyValuePair<string, Guid>> partitions)
+		public PartitionedStorage(IUpdateStorage storage, params KeyValuePair<string, Guid>[] partitions)
 		{
 			this.storage = storage;
-			this.partitions = partitions;
+			this.partitions = partitions ?? new KeyValuePair<string, Guid>[] { };
 		}
 		public void Dispose()
 		{
