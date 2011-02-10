@@ -17,7 +17,6 @@ echo Merging
 mkdir output\NHibernate
 SET FILES_TO_MERGE=
 SET FILES_TO_MERGE=%FILES_TO_MERGE% "src/proj/StorageAccess/bin/Release/StorageAccess.dll"
-SET FILES_TO_MERGE=%FILES_TO_MERGE% "src/proj/StorageAccess.Core/bin/Release/StorageAccess.Core.dll"
 SET FILES_TO_MERGE=%FILES_TO_MERGE% "src/proj/StorageAccess.NHibernate/bin/Release/StorageAccess.NHibernate.dll"
 bin\ilmerge-bin\ILMerge.exe /keyfile:src/StorageAccess.snk /targetplatform:v4,%FRAMEWORK_PATH% /xmldocs /out:output/NHibernate/StorageAccess.NHibernate.dll %FILES_TO_MERGE%
 copy lib\nhibernate-bin\* output\NHibernate
