@@ -11,48 +11,39 @@ namespace StorageAccess.Core
 		private static readonly IDictionary<IReflect, IDictionary<string, PropertyInfo>> Cache =
 			new Dictionary<IReflect, IDictionary<string, PropertyInfo>>();
 
-		private const string TenantPartition = "TenantId";
-		private const string AccountPartition = "AccountId";
+		private const string DefaultTenantKeyName = "TenantId";
 		private readonly IUpdateStorage storage;
-		private readonly IEnumerable<KeyValuePair<string, Guid>> partitions;
+		private readonly Guid tenantId;
+		private readonly string tenantKeyName;
 
-		public PartitionedStorage(IUpdateStorage storage, Guid tenantId, Guid accountId)
-			: this(storage, GetPartitions(tenantId, accountId).ToArray())
+		public PartitionedStorage(IUpdateStorage storage, Guid tenantId)
+			: this(storage, tenantId, null)
 		{
 		}
-		public PartitionedStorage(IUpdateStorage storage, params KeyValuePair<string, Guid>[] partitions)
+		public PartitionedStorage(IUpdateStorage storage, Guid tenantId, string tenantKeyName)
 		{
 			this.storage = storage;
-			this.partitions = partitions ?? new KeyValuePair<string, Guid>[] { };
+			this.tenantId = tenantId;
+			this.tenantKeyName = tenantKeyName ?? DefaultTenantKeyName;
 		}
 		public void Dispose()
 		{
 			this.storage.Dispose();
 			GC.SuppressFinalize(this);
 		}
-		private static IEnumerable<KeyValuePair<string, Guid>> GetPartitions(Guid tenantId, Guid accountId)
-		{
-			yield return new KeyValuePair<string, Guid>(TenantPartition, tenantId);
-			yield return new KeyValuePair<string, Guid>(AccountPartition, accountId);
-		}
 
 		public IQueryable<TItem> Items<TItem>() where TItem : class
 		{
 			var items = this.storage.Items<TItem>();
 
-			foreach (var partition in this.partitions)
-			{
-				var partitionExpression = FilterByPartition<TItem>(partition);
-				items = items.Where(partitionExpression);
-			}
+			items = items.Where(this.FilterByPartition<TItem>());
 
 			return items;
 		}
-		private static Expression<Func<TItem, bool>> FilterByPartition<TItem>(
-			KeyValuePair<string, Guid> partition) where TItem : class
+		private Expression<Func<TItem, bool>> FilterByPartition<TItem>() where TItem : class
 		{
 			var type = typeof(TItem);
-			var property = GetProperty(type, partition.Key);
+			var property = GetProperty(type, this.tenantKeyName);
 			if (property == null)
 				return item => true; // item doesn't have the partition property
 
@@ -60,7 +51,7 @@ namespace StorageAccess.Core
 			var parameter = Expression.Parameter(type, "item");
 			var equals = Expression.Equal(
 				Expression.Property(parameter, property),
-				Expression.Constant(partition.Value));
+				Expression.Constant(this.tenantId));
 
 			return Expression.Lambda<Func<TItem, bool>>(equals, new[] { parameter });
 		}
@@ -84,12 +75,9 @@ namespace StorageAccess.Core
 				return null;
 
 			var itemType = item.GetType();
-			foreach (var partition in this.partitions)
-			{
-				var property = GetProperty(itemType, partition.Key);
-				if (property != null)
-					property.SetValue(item, partition.Value, null);
-			}
+			var property = GetProperty(itemType, this.tenantKeyName);
+			if (property != null)
+				property.SetValue(item, this.tenantId, null);
 
 			return item;
 		}
