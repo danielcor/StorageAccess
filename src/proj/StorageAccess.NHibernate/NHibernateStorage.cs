@@ -38,7 +38,7 @@ namespace StorageAccess.NHibernate
 		}
 		public void BeginTransaction(TransactionIsolation level)
 		{
-			this.transaction = this.transaction ?? this.session.BeginTransaction(level.GetLevel());
+			this.transaction = this.transaction ?? this.session.BeginTransaction(level);
 		}
 		public void CommitTransaction()
 		{
