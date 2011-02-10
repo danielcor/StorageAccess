@@ -1,15 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "proj", "proj", "{0AA16CE6-FF8B-424B-93EB-67082EC68707}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{16E1CFFD-0C22-47D9-9EA8-4F27D2BE1875}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorageAccess", "proj\StorageAccess\StorageAccess.csproj", "{00734BAB-AB65-4146-A65B-CDFBFB4D93C6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorageAccess.NHibernate", "proj\StorageAccess.NHibernate\StorageAccess.NHibernate.csproj", "{D2A59CC5-ECE3-447B-97A3-013D601F149C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorageAccess.Core", "proj\StorageAccess.Core\StorageAccess.Core.csproj", "{F30AA96A-5307-4178-8D93-E57F983B2A0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,17 +19,8 @@ Global
 		{D2A59CC5-ECE3-447B-97A3-013D601F149C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2A59CC5-ECE3-447B-97A3-013D601F149C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2A59CC5-ECE3-447B-97A3-013D601F149C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F30AA96A-5307-4178-8D93-E57F983B2A0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F30AA96A-5307-4178-8D93-E57F983B2A0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F30AA96A-5307-4178-8D93-E57F983B2A0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F30AA96A-5307-4178-8D93-E57F983B2A0A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{00734BAB-AB65-4146-A65B-CDFBFB4D93C6} = {0AA16CE6-FF8B-424B-93EB-67082EC68707}
-		{D2A59CC5-ECE3-447B-97A3-013D601F149C} = {0AA16CE6-FF8B-424B-93EB-67082EC68707}
-		{F30AA96A-5307-4178-8D93-E57F983B2A0A} = {0AA16CE6-FF8B-424B-93EB-67082EC68707}
 	EndGlobalSection
 EndGlobal
